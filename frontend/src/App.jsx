@@ -64,13 +64,17 @@
 
 
 import React from 'react'
-import ProductsList from "../pages/ProductsList";
+import ProductsList from "./pages/ProductsList";
+import { Route, Routes } from 'react-router-dom';
+import ProductDetails from './pages/ProductDetails';
+
 
 function App() {
   return (
-    <div>
-      <ProductsList />
-    </div>
+    <Routes>
+      <Route path='/' element={<ProductsList />} />
+      <Route path='/product/:id' element={<ProductDetails />} />
+    </Routes>
   )
 }
 

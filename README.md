@@ -19,3 +19,16 @@
     - Add loading / error states
     - Tailwind styling
 
+--> Forth PART 
+    - Setup React Router DOM
+    - Create ProductDetail.jsx Page
+    - Fetch /api/products/:id
+    - Display product image, description, price
+    - Add to cart button (UI only)
+
+--> Fifth PART 
+    - Create Cart and Cartitem models.
+    - Expose /api/cart/, /api/cart/add/, /api/cart/remove/
+    - Use fetch() to sync React cart with API
+
+
