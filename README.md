@@ -40,4 +40,13 @@
     - Remove items.
     - All these at frontend side.
 
+--> Seventh PART 
+    - Update Cart Quantity (+/-) for django.
+    - Django API intregation.
+    - FE implementation.
 
+--> Eighth PART 
+    - Create Checkout form (Address, phone payment method dropdown)
+    - API endpoint to create.
+    - React frontend form --> POST to /api/orders/create.
+    - Show success message after placing order.

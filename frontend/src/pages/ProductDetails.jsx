@@ -60,6 +60,8 @@ function ProductDetails() {
         return <div>No product found</div>
     }
 
+
+
     return (
         <div className='min-h-screen bg-gray-100 flex justify-center items-center py-10'>
             <div className='bg-white shadow-lg rounded-2xl p-8 max-w-3xl w-full'>
@@ -71,7 +73,7 @@ function ProductDetails() {
                         <p className='text-gray-600 mb-4'>{product.description}</p>
                         <p className='text-2xl font-semibold text-green-600 mb-6'>{product.price}</p>
 
-                        <button onClick={() => addToCart(product)} className='bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition'>Add to cart 👜</button>
+                        <button onClick={() => addToCart(product.id)} className='bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition'>Add to cart 👜</button>
 
                         <div className='mt-4'>
                             <a href="/" className='text-blue-600 hover:underline'>⬅️Back to home</a>
