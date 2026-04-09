@@ -30,5 +30,14 @@
     - Create Cart and Cartitem models.
     - Expose /api/cart/, /api/cart/add/, /api/cart/remove/
     - Use fetch() to sync React cart with API
+    - All these at Backend side 
+
+--> Sixth PART 
+    - Add products to cart from detail page.
+    - Use Context API for cart state.
+    - Display cart items on cart.
+    - Update quantity (+/-).
+    - Remove items.
+    - All these at frontend side.
 
 

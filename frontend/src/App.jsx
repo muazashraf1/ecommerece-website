@@ -67,14 +67,20 @@ import React from 'react'
 import ProductsList from "./pages/ProductsList";
 import { Route, Routes } from 'react-router-dom';
 import ProductDetails from './pages/ProductDetails';
+import Navbar from './components/NavBar';
+import CartPage from './pages/CartPage';
 
 
 function App() {
   return (
-    <Routes>
-      <Route path='/' element={<ProductsList />} />
-      <Route path='/product/:id' element={<ProductDetails />} />
-    </Routes>
+    <>
+      <Navbar />
+      <Routes>
+        <Route path='/' element={<ProductsList />} />
+        <Route path='/product/:id' element={<ProductDetails />} />
+        <Route path='/cart' element={<CartPage />} />
+      </Routes>
+    </>
   )
 }
 
