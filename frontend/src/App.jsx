@@ -69,6 +69,7 @@ import { Route, Routes } from 'react-router-dom';
 import ProductDetails from './pages/ProductDetails';
 import Navbar from './components/NavBar';
 import CartPage from './pages/CartPage';
+import CheckOutPage from './pages/CheckOutPage';
 
 
 function App() {
@@ -79,6 +80,7 @@ function App() {
         <Route path='/' element={<ProductsList />} />
         <Route path='/product/:id' element={<ProductDetails />} />
         <Route path='/cart' element={<CartPage />} />
+        <Route path='/checkout' element={<CheckOutPage />} />
       </Routes>
     </>
   )
