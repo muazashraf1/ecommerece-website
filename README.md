@@ -50,3 +50,10 @@
     - API endpoint to create.
     - React frontend form --> POST to /api/orders/create.
     - Show success message after placing order.
+
+
+--> Ninth PART 
+    - Django Rest Simple JWT setup.
+    - /api/register/ and /api/token/ endpoints.
+    - React login/signup pages + store JWT in local storage.
+    - Protect cart & order routes fro logged-in users.

@@ -9,119 +9,195 @@
 #     return JsonResponse(data)
 
 
-
 from rest_framework.response import Response
-from rest_framework.decorators import api_view
-from .models import Product,  Category, Cart, CartItem, Order, OrderItem
-from .serializers import ProductSerializer, CategorySerializer, CartItemSerializer, CartSerializer
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAuthenticated, AllowAny
+from django.contrib.auth.models import User
+from rest_framework import status
+from .models import Product, Category, Cart, CartItem, Order, OrderItem
+from .serializers import (
+    ProductSerializer,
+    CategorySerializer,
+    CartItemSerializer,
+    CartSerializer,
+    ResgisterSerializer,
+    UserSerializer,
+)
 
 
-@api_view(['GET'])
+@api_view(["GET"])
 def get_products(request):
     product = Product.objects.all()
     serializer = ProductSerializer(product, many=True)
     return Response(serializer.data)
 
-@api_view(['GET'])
+
+@api_view(["GET"])
 def get_product(request, pk):
     try:
         product = Product.objects.get(id=pk)
-        serailizer = ProductSerializer(product, context={"request" : request})
+        serailizer = ProductSerializer(product, context={"request": request})
         return Response(serailizer.data)
     except Product.DoesNotExist:
-        return Response ({"error" : "product not found"})
+        return Response({"error": "product not found"})
 
 
-@api_view(['GET'])
+@api_view(["GET"])
 def get_categories(request):
     categories = Category.objects.all()
     serializer = CategorySerializer(categories, many=True)
     return Response(serializer.data)
 
-@api_view(['GET'])
+
+@api_view(["GET"])
+@permission_classes([IsAuthenticated])
 def get_cart(request):
-    cart, created = Cart.objects.get_or_create(user=None)
+    cart, created = Cart.objects.get_or_create(user=request.user)
     serializer = CartSerializer(cart)
     return Response(serializer.data)
 
-@api_view(['POST'])
+
+@api_view(["POST"])
+@permission_classes([IsAuthenticated])
 def add_to_cart(request):
-    product_id = request.data.get('product_id')
+    product_id = request.data.get("product_id")
     product = Product.objects.get(id=product_id)
-    cart, created = Cart.objects.get_or_create(user=None)
+    cart, created = Cart.objects.get_or_create(user=request.user)
     item, created = CartItem.objects.get_or_create(cart=cart, product=product)
 
-    if not created :
+    if not created:
         item.quantity += 1
         item.save()
-    return Response({'message': 'Product added to cart', "cart": CartSerializer(cart).data})
+    return Response(
+        {"message": "Product added to cart", "cart": CartSerializer(cart).data}
+    )
 
-@api_view(['POST'])
+
+@api_view(["POST"])
+@permission_classes([IsAuthenticated])
 def update_cart_quantity(request):
-    item_id = request.data.get('item_id')
-    quantity = request.data.get('quantity')
+    item_id = request.data.get("item_id")
+    quantity = request.data.get("quantity")
 
     if not item_id or quantity is None:
         return Response({"message": "Item ID and Quantity are required"}, status=400)
-    
+
     try:
         item = CartItem.objects.get(id=item_id)
         if int(quantity) < 1:
             item.delete()
-            return Response({"error" : "Quantity ust be atleast 1"}, status=400)
+            return Response({"error": "Quantity ust be atleast 1"}, status=400)
         item.quantity = quantity
         item.save()
         serializer = CartSerializer(item)
         return Response(serializer.data)
     except:
-        return Response({"message" : "Cart items not found"}, status=400)
+        return Response({"message": "Cart items not found"}, status=400)
 
-@api_view(['POST'])
+
+@api_view(["POST"])
+@permission_classes([IsAuthenticated])
 def remove_from_cart(request):
-    item_id = request.data.get('item_id')
+    item_id = request.data.get("item_id")
     CartItem.objects.filter(id=item_id).delete()
-    return Response({'message' : 'item removed from cart!'})
+    return Response({"message": "item removed from cart!"})
 
 
-@api_view(['POST'])
+# @api_view(['POST'])
+# def create_order(request):
+# try:
+#     data = request.data
+
+#     name = data.get('name')
+#     address = data.get('address')
+#     phone = data.get('phone')
+#     payment_method = data.get('payment_method', 'COD')
+
+#         cart = Cart.objects.first()
+
+#         if not cart or not cart.items.exists():
+#             return Response({'error' : "Cart is emty"}, status=400)
+
+#         total = sum(float(item.product.price) * item.quantity for item in cart.items.all())
+
+#         #create order
+#         order = Order.objects.create(
+#             user = None,
+#             total_amount = total,
+#         )
+
+#         #create order item
+#         for item in cart.items.all():
+#             OrderItem.objects.create(
+#                 order = order,
+#                 product = item.product,
+#                 quantity = item.quantity,
+#                 price = item.product.price,
+#             )
+#         #clear the cart
+
+#         cart.items.all().delete()
+
+#         return Response({
+#             "message" : "order place successfully",
+#             "order_id" : order.id
+#         })
+
+#     except Exception as e:
+#         return Response({'error' : str(e)}, status=500)
+
+
+@api_view(["POST"])
+@permission_classes([IsAuthenticated])
 def create_order(request):
     try:
         data = request.data
 
-        name = data.get('name')
-        address = data.get('address')
-        phone = data.get('phone')
-        payment_method = data.get('payment_method', 'COD')
+        name = data.get("name")
+        address = data.get("address")
+        phone = data.get("phone")
+        payment_method = data.get("payment_method", "COD")
 
-        cart = Cart.objects.first()
+        # validate phone number
 
-        if not cart or not cart.items.exists():
-            return Response({'error' : "Cart is emty"}, status=400)
-        
-        total = sum(float(item.product.price) * item.quantity for item in cart.items.all())
+        if not phone.isdigit() or len(phone) < 10:
+            return Response({"error": "Invalid Phone number"}, status=400)
 
-        #create order
-        order = Order.objects.create(
-            user = None,
-            total_amount = total,
-        )
+        # get user cart
 
-        #create order item
+        cart, created = Cart.objects.get_or_create(user=request.user)
+        if not cart.items.exists():
+            return Response({"error": "Cart is empty"}, status=400)
+
+        total = sum([item.product.price * item.quantity for item in cart.items.all()])
+
+        order = Order.objects.create(user=request.user, total_amount=total)
+
         for item in cart.items.all():
             OrderItem.objects.create(
-                order = order,
-                product = item.product,
-                quantity = item.quantity,
-                price = item.product.price,
-            )
-        #clear the cart
+            order=order,
+            product=item.product,
+            quantity=item.quantity,
+            price=item.product.price,
+        )
+
+        # clear the cart
 
         cart.items.all().delete()
+        return Response({"message": "order created successfully", "order_id": order.id})
 
-        return Response({
-            "message" : "order place successfully",
-            "order_id" : order.id
-        })
-    
     except Exception as e:
-        return Response({'error' : str(e)}, status=500)
+        return Response({"error": str(e)}, status=500)
+
+
+@api_view(["POST"])
+@permission_classes([AllowAny ])
+def register_view(request):
+    serializer = ResgisterSerializer(data=request.data)
+    if serializer.is_valid():
+        user = serializer.save()
+        return Response(
+            {"message": "User created successfully", "user": UserSerializer(user).data},
+            status=status.HTTP_201_CREATED,
+        )
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

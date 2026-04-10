@@ -16,7 +16,7 @@ function CartPage() {
             {cartItems.length === 0 ? (
                 <p className='text-center text-gray-600'>Ypur cart is empty</p>
             ) : (
-                <div className='max-w-4xl mx-auto bg-white p-6 rounded-lg shadow-md'>
+                <div className=' d'>
                     {cartItems.map((item) => (
                         <div key={item.id} className='flex item-center justify-center mb-4'>
 
