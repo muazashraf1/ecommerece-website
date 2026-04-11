@@ -1,6 +1,8 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
 import { useCart } from '../context/CartContext'
+import { clearTokens } from '../utils/auth'
+import { getAccessToken } from '../utils/auth'
 
 function Navbar() {
     const { cartItems } = useCart()

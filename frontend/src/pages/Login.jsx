@@ -30,7 +30,7 @@ function Login() {
             })
 
             const data = await response.json()
-            if(response.ok) {
+            if (response.ok) {
                 saveToken(data)
                 setMsg("login successfull")
                 setTimeout(() => {
