@@ -4,8 +4,8 @@ import { useNavigate } from 'react-router-dom'
 
 function Login() {
     const BASEURL = import.meta.env.VITE_DJANGO_BASE_URL
-    const [from, setForm] = useState({
-        username: "",
+    const [form, setForm] = useState({
+        email: "",
         password: ""
     })
 
@@ -13,7 +13,7 @@ function Login() {
     const navigate = useNavigate()
 
     const handleChange = (e) => {
-        setForm({ ...from, [e.target.name]: e.target.value })
+        setForm({ ...form, [e.target.name]: e.target.value })
     }
 
     const handleSubmit = async (e) => {
@@ -26,21 +26,29 @@ function Login() {
                     "Content-Type": "application/json"
                 },
 
-                body: JSON.stringify(from)
+                body: JSON.stringify(form)
             })
 
             const data = await response.json()
             if (response.ok) {
+                // Verify tokens exist before saving
+                if (!data.access || !data.refresh) {
+                    setMsg("Error: Missing tokens in response")
+                    console.error("Token response:", data)
+                    return
+                }
                 saveToken(data)
-                setMsg("login successfull")
+                setMsg("Login successful")
                 setTimeout(() => {
                     navigate('/')
                 }, 1000)
             } else {
-                setMsg(data.detail || "login failed plz try again")
+                setMsg(data.detail || JSON.stringify(data) || "Login failed, please try again")
+                console.error("Login error:", data)
             }
         } catch (error) {
-            setMsg("Error is occured")
+            setMsg("An error occurred: " + error.message)
+            console.error("Login error:", error)
         }
     }
     return (
@@ -54,8 +62,8 @@ function Login() {
                         type="email"
                         placeholder="Email"
                         onChange={handleChange}
-                        value={from.username}
-                        name='username'
+                        value={form.email}
+                        name='email'
                         className="w-full border p-2 rounded"
                     />
 
@@ -63,7 +71,7 @@ function Login() {
                         type="password"
                         placeholder="Password"
                         onChange={handleChange}
-                        value={from.password}
+                        value={form.password}
                         name='password'
                         className="w-full border p-2 rounded"
                     />
@@ -79,9 +87,9 @@ function Login() {
                 {msg && <p className=''>{msg}</p>}
 
                 <div>
-                    dont have an aaccount ? {''}
+                    Don't have an account? {''}
                     <a href="/signup" className='text-blue-500 hover:underline'>
-                        signup
+                        Sign up
                     </a>
                 </div>
             </div>

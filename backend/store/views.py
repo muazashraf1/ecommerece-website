@@ -14,6 +14,7 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from django.contrib.auth.models import User
 from rest_framework import status
+from rest_framework_simplejwt.views import TokenObtainPairView
 from .models import Product, Category, Cart, CartItem, Order, OrderItem
 from .serializers import (
     ProductSerializer,
@@ -22,6 +23,7 @@ from .serializers import (
     CartSerializer,
     ResgisterSerializer,
     UserSerializer,
+    EmailTokenObtainPairSerializer,
 )
 
 
@@ -201,3 +203,7 @@ def register_view(request):
             status=status.HTTP_201_CREATED,
         )
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class EmailTokenObtainPairView(TokenObtainPairView):
+    serializer_class = EmailTokenObtainPairSerializer

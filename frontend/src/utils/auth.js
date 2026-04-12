@@ -1,6 +1,11 @@
 export const saveToken = (token) => {
-    localStorage.setItem('access_token' , token.access),
-    localStorage.setItem('refresh_token' , token.refresh)
+    if (!token.access || !token.refresh) {
+        console.error('Invalid token structure:', token);
+        return false;
+    }
+    localStorage.setItem('access_token', token.access);
+    localStorage.setItem('refresh_token', token.refresh);
+    return true;
 }
 
 export const clearTokens = () => {
@@ -14,7 +19,7 @@ export const getAccessToken = () => {
 
 export const authFetch = (url, options = {}) => {
     const token =   getAccessToken();
-    const headers = options.headres ? {...options.headres} : {};
+    const headers = options.headers ? {...options.headers} : {};
 
     if (token) headers["Authorization"] = `Bearer ${token}`;
     headers['Content-Type'] = "application/json";

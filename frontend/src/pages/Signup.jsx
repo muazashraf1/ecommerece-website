@@ -26,7 +26,7 @@ function Signup() {
     try {
       const res = await fetch(`${BASEURL}/api/register/`, {
         method: "POST",
-        headers: { "Content-Type": "aplication/json" },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(form)
       });
       const data = await res.json()
@@ -75,10 +75,16 @@ function Signup() {
           <input
             type="password"
             name="password2"
-            value={form.password}
+            value={form.password2}
             onChange={handleChange}
             placeholder='Enter username'
           />
+          <button
+            type="submit"
+            className='w-full bg-blue-500 text-white p-2 rounded'
+          >
+            Signup
+          </button>
 
         </form>
 
