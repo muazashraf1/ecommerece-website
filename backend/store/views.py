@@ -21,7 +21,7 @@ from .serializers import (
     CategorySerializer,
     CartItemSerializer,
     CartSerializer,
-    ResgisterSerializer,
+    ResgisterSerializer,    
     UserSerializer,
     EmailTokenObtainPairSerializer,
 )
